@@ -6,19 +6,33 @@ from dash.dependencies import Input, Output
 
 import figures.figure_1 as figure_1
 
-FONT = 'Rockwell'
+print('hello')
+
+FONT = 'Jost'
 
 app = dash.Dash(__name__)
 
 app.layout = \
     html.Div([
-
+        
+        html.Header(children=[
+            html.Div(children=[
+                        html.H2('Les'),
+                        html.H1('OSCARS'),
+                        html.H2('Font-ils de la discrimination?'),
+                        html.Hr(),
+                        html.P('Nous avons analysé les gagnants des dernières éditions pour le savoir'), 
+                    ],
+                    className="texte-entete"
+                    ),
+        ]),
         # TODO Modifier le layout 
         
-        html.H1('Oscar Awards'),
-        html.H2('Demographics Analysis'),
-        html.P('On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains. '),
-
+        html.Main(children=[
+            
+            html.Div(children=[
+             html.H3('Lors des 97 cérémonies des Oscars, il y a eu 416 gagnants. Voici leur distribution.'),
+        
         dcc.Tabs(id='tabs', value='Race or Ethnicity', children=[
             dcc.Tab(label='Ethnie', value='Race or Ethnicity'),
             dcc.Tab(label='Genre', value='Gender'),
@@ -26,8 +40,7 @@ app.layout = \
             dcc.Tab(label='Age', value='Age'),
             dcc.Tab(label='Orientation', value='Sexual orientation')
         ]),
-
-        html.Div([
+            html.Div([
             dcc.Checklist(
                 id='category-checklist',
                 options=[],
@@ -43,8 +56,13 @@ app.layout = \
                 marks={i: '{}'.format(i) for i in range(1928, 2025, 10)},
                 value=[1990, 2000],
                 allowCross=False
-            ),
-        ]),
+            )
+        ])
+            ])
+            ])
+       
+
+        
     ],
     style={'width': '80%', 'margin': 'auto', 'fontFamily': FONT})
 

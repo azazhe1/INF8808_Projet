@@ -7,6 +7,27 @@ import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
+def generate_color_dict():
+    return {
+        'White': '#FFFFFF',   # White
+        'Black': '#000000',   # Black
+        'Asian': '#BE8F4D',   # Brown
+        'Hispanic': '#FFDA6E', # Yellow
+        'Other': '#C56D65',   # Reddish
+        'Mixed': '#593A1E'    # Dark Brown
+    }
+    
+# Define custom colors for the markers in your Waffle chart
+CUSTOM_COLORS = [
+    '#FFFFFF',  # White
+    '#000000',  # Black
+    '#BE8F4D',  # Bronze
+    '#FFDA6E',  # Gold
+    '#C56D65',  # Rose
+    '#593A1E'   # Brown
+]
+
+
 TRANSPARENT = 'rgba(0,0,0,0)'
 
 class DataLoader():
@@ -76,7 +97,8 @@ class WaffleChart():
                     shared_xaxes=True, shared_yaxes=True,
                     horizontal_spacing=0.01, vertical_spacing=0.01)
 
-        color_scale_dict = generate_color_dict(identifiers=distribution, colorscale_name='Pastel2')
+        color_scale_dict = generate_color_dict()  # Use predefined colors
+
 
         # Remove this if you want to use the same maximum for all subplots
         maximum = max(distribution.values())
@@ -111,7 +133,7 @@ class WaffleChart():
 
         return fig 
     
-    def plot_scatter_waffle_chart(self, distribution, df, category, font_size=16, font_family='Rockwell'):
+    def plot_scatter_waffle_chart(self, distribution, df, category, font_size=16, font_family='Jost'):
 
         # distribution = distribution_dict[category]
         fig = make_subplots(rows=1, cols=len(distribution),
@@ -133,13 +155,19 @@ class WaffleChart():
                 .assign(x=lambda x: x['index'] % 10)
                 .assign(y=lambda x: x['index'] // 10))
             
-            fig.add_trace(go.Scatter(x=sub_df['x'], y=sub_df['y'], mode='markers', marker=dict(size=min(400/y_max, 30),
-                                                                            color=color_scale_dict[key],
-                                                                            symbol='circle-open'),
-                                    customdata=sub_df[['Name', 'Category', 'Film', 'Year_Ceremony']],
-                                    hovertemplate='Name: %{customdata[0]}<br>Category: %{customdata[1]}<br>Film: %{customdata[2]}<br>Year: %{customdata[3]} <extra></extra>'),
-                                    # xtitle with key value
-                            row=1, col=i+1)
+            fig.add_trace(go.Scatter(
+    x=sub_df['x'], y=sub_df['y'],
+    mode='markers',
+    marker=dict(
+        size=min(400/y_max, 30),
+        color=[color_scale_dict[key]] * len(sub_df),  # Assign unique color to each marker
+        symbol='circle'  # Change to 'circle' if you want filled markers
+    ),
+    customdata=sub_df[['Name', 'Category', 'Film', 'Year_Ceremony']],
+    hovertemplate='Name: %{customdata[0]}<br>Category: %{customdata[1]}<br>Film: %{customdata[2]}<br>Year: %{customdata[3]} <extra></extra>'
+), row=1, col=i+1)
+
+
 
             fig.add_annotation(x=4.5, y=-1., xref=f'x{i+1}', yref=f'y{i+1}',
                             text=key, showarrow=False, 

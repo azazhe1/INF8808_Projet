@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;600&display=swap');
+
+:root {
+    --color-1: #ffffff;
+    --color-2: #000000;
+    --color-3: #114bb8;
+    --color-4: #bd0a78;
+    --color-5: #e6f5c9;
+    --color-6: #fff2ae;
+    --color-7: #f1e2cc;
+    --color-8: #cccccc;
+}
+
+
+body {
+    
+    
+    background-color: #D9C58A;
+    color: #0000;
+    margin: 0;
+    height: 100vh;
+
+}
+
+header {
+    background-image: url('statue.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    margin-top: 50px;
+    height: 639px;
+    display: flex;
+    justify-content: center;
+    
+    
+    
+    
+}
+
+main {
+    height: 100%;
+    padding-top: 75px;
+    max-width: 1000px;
+    display: flex;
+    justify-content: center;
+    margin: auto;
+}
+
+div.texte-entete {
+    display: flex;
+    flex-direction: column;   /* Align items vertically in a column */
+    justify-content: center;  /* Center horizontally */
+   padding: 20px;
+}
+
+h1 {
+    color: #000;
+font-family: Jost;
+font-size: 96px;
+font-style: normal;
+font-weight: 400;
+line-height: 1;
+letter-spacing: 53.76px;
+text-align: left;
+margin: 0;
+padding: 0;
+}
+
+h2 {
+color: #000;
+text-align: left;
+font-family: Jost;
+font-size: 28px;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
+letter-spacing: 6.44px;
+text-transform: uppercase;
+margin: 0;
+padding: 0;
+}
+
+
+h3 {
+font-family: Jost;
+color: #000;
+font-size: 22px;
+font-style: normal;
+font-weight: 400;
+line-height: 106.182%; /* 23.36px */
+letter-spacing: 1.76px;
+}
+
+hr {
+    border: 1px solid #000;
+    width: 100%;
+}
+
+p {
+    color: #000;
+font-family: Roboto;
+font-size: 16px;
+font-style: normal;
+font-weight: 400;
+line-height: 131.187%; /* 20.99px */
+letter-spacing: 0.48px;
+}
+
+button {
+    padding: 10px 30px;
+    color: #000;
+    background-color: #fff;
+    border: 1px solid #333;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: 0;
+    font-family: 'Montserrat', 'sans-serif';
+    font-size: 16px;
+}
+
+button:hover, button:active {
+	background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+	background-color:#f6f6f6;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+}
+
+.viz-container{
+    height: 100%;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    padding: 0 100px;
+}
+
+.xy {
+    cursor: default;
+}
+
+.graph {
+    width: 100%;
+    height: 100%;
+}
+
+.panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 25px 100px;
+    margin: 0 25px 0 0;
+    border-width: 1px 1px 0 0; 
+    border-radius: 0 25px 0 0;
+    border-style: solid;
+    border-color: black;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+}
+
+#mode {
+    font-weight: bold;
+}
+
+
