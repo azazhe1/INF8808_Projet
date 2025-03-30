@@ -13,6 +13,8 @@ app = dash.Dash(__name__)
 app.layout = \
     html.Div([
 
+        # TODO Modifier le layout 
+        
         html.H1('Oscar Awards'),
         html.H2('Demographics Analysis'),
         html.P('On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains. '),
@@ -46,6 +48,8 @@ app.layout = \
     ],
     style={'width': '80%', 'margin': 'auto', 'fontFamily': FONT})
 
+
+
 # Figure 1
 dataloader = figure_1.DataLoader()
 dataloader.load_data('assets/The_Oscar_Award_Demographics_1928-2025 - The_Oscar_Award_Demographics_1928-2025_v3.csv')
@@ -78,6 +82,8 @@ def update_waffle_chart(year_range, category, selected_categories):
     distribution_dict, _ = dataloader.get_unique_distribution(df)
     wchart = figure_1.WaffleChart()
     return wchart.plot_scatter_waffle_chart({key: distribution_dict[category][key] for key in selected_categories}, df, category)
+
+# TODO Rajouter call back des autres figures 
 
 if __name__ == '__main__':
     app.run(port=8070, debug=True)
