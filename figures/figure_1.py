@@ -1,4 +1,3 @@
-import pandas as pd 
 import math 
 
 import plotly.colors as pc
@@ -7,72 +6,7 @@ import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
-def generate_color_dict():
-    return {
-        'White': '#FFFFFF',   # White
-        'Black': '#000000',   # Black
-        'Asian': '#BE8F4D',   # Brown
-        'Hispanic': '#FFDA6E', # Yellow
-        'Other': '#C56D65',   # Reddish
-        'Mixed': '#593A1E'    # Dark Brown
-    }
-    
-# Define custom colors for the markers in your Waffle chart
-CUSTOM_COLORS = [
-    '#FFFFFF',  # White
-    '#000000',  # Black
-    '#BE8F4D',  # Bronze
-    '#FFDA6E',  # Gold
-    '#C56D65',  # Rose
-    '#593A1E'   # Brown
-]
-
-
-TRANSPARENT = 'rgba(0,0,0,0)'
-
-class DataLoader():
-
-    def __init__(self):
-        self.data = None
-
-    def load_data(self, path):
-        self.data = pd.read_csv(path)
-    
-    def preprocess_data(self):
-        self.data['Birth_Date'] = pd.to_datetime(self.data['Birth_Date'], format='%Y-%m-%d', errors='coerce')
-        self.data['Ceremony_Date'] = pd.to_datetime(self.data['Year_Ceremony'], format='%Y').apply(lambda x: x.replace(month=3, day=1))
-        self.data['Age'] = ((self.data['Ceremony_Date'] - self.data['Birth_Date']).dt.days / 365.25).apply(math.floor, 0)
-        self.data = self.data.drop(columns=['Birth_Date', 'Birth_Place', 'Ceremony_Date', 'Link', 'Ceremony_Date'])
-        return self.data
-    
-    def filter_data(self, start_year, end_year):
-        return self.data[(self.data['Year_Ceremony'] >= start_year) & (self.data['Year_Ceremony'] <= end_year)]
-    
-    def get_unique_distribution(self, data):
-        """ 
-        Exemple de résultat attendu:
-        (
-        {'Straight': 246,
-        'Na': 11,
-        'Matter of Dispute': 7,
-        'Gay': 6,
-        'Bisexual': 3,
-        'Lesbian': 2},
-        275)
-        """
-        df = data.copy()    
-        df.drop(columns=['Category', 'Name', 'Film', 'Year_Ceremony', 'Win_Oscar?'], inplace=True)
-        df = df.reindex(sorted(df.columns), axis=1)
-
-        result_dict = {}
-        for col in df.columns:
-            result_dict[col] = df.groupby(col).size().to_dict()
-            result_dict[col] = dict(sorted(result_dict[col].items(), key=lambda item: item[1], reverse=True))
-
-        total = len(df)
-
-        return result_dict, total 
-    
+from helper import TRANSPARENT
 
 class WaffleChart():
 
@@ -277,17 +211,17 @@ def generate_color_dict(identifiers=None, n_colors=None, colorscale_name='Set1')
     return color_dict
 
 # Function to lighten color by mixing with white
-def lighten_color(color, amount=0.8):  # amount: 0=original, 1=white
-    """
-    Lightens a color by blending it with white
-    """
-    # Convert from plotly 'rgb(r,g,b)' to tuple
-    rgb_str = color.strip('rgb(').strip(')')
-    r, g, b = [int(x) for x in rgb_str.split(',')]
+# def lighten_color(color, amount=0.8):  # amount: 0=original, 1=white
+#     """
+#     Lightens a color by blending it with white
+#     """
+#     # Convert from plotly 'rgb(r,g,b)' to tuple
+#     rgb_str = color.strip('rgb(').strip(')')
+#     r, g, b = [int(x) for x in rgb_str.split(',')]
     
-    # Mix with white
-    r = int(r + (255 - r) * amount)
-    g = int(g + (255 - g) * amount)
-    b = int(b + (255 - b) * amount)
+#     # Mix with white
+#     r = int(r + (255 - r) * amount)
+#     g = int(g + (255 - g) * amount)
+#     b = int(b + (255 - b) * amount)
     
-    return f'rgb({r},{g},{b})'
+#     return f'rgb({r},{g},{b})'

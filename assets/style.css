@@ -169,4 +169,29 @@ button:hover, button:active {
     font-weight: bold;
 }
 
+.dash-tabs {
+    background-color: #f0f0f0; /* Background color for the tabs container */
+}
+
+.dash-tab {
+    color: black; /* Default text color for tabs */
+    font-family: Jost, sans-serif;
+    font-size: 16px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.dash-tab--selected {
+    color: white; /* Text color for selected tab */
+    background-color: black; /* Background color for selected tab */
+    font-weight: bold;
+}
+
+.dash-checklist label {
+    color: black; /* Text color for checklist labels */
+    font-family: Jost, sans-serif;
+    font-size: 14px;
+}
+
 

@@ -1,0 +1,10 @@
+FIGURE 1 :
+- Pour améliorer la lisibilité, on pourrait ajouter le nombre total pour chaque groupe
+- Ajouter le choix de ne pouvoir voir que les gagnants
+
+
+FIGURE 4 :
+- 
+
+GLOBAL :
+- Est ce qu'on utilise un seul slider, une seule ligne d'onglet et une seule liste de check list ? Ou bien une par figure ?
