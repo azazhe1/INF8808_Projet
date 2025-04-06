@@ -6,7 +6,7 @@ import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
-from helper import TRANSPARENT
+from helper import TRANSPARENT, generate_color_dict
 
 # Stacked Area Chart with Normalized Values
 
@@ -31,14 +31,92 @@ class StackedAreaChart():
 
         # Normaliser les valeurs
         df_normalized = df.div(df.sum(axis=1), axis=0)
+        
+        # Convertir en pourcentage (multiplier par 100)
+        df_percentage = df_normalized * 100
+        
+        # Obtenir les couleurs pour chaque catégorie
+        color_dict = generate_color_dict(identifiers=df_normalized.columns, colorscale_name='Pastel2')
+        color_sequence = [color_dict[cat] for cat in df_normalized.columns]
 
-        # Créer le graphique
-        fig = px.area(df_normalized, x=df_normalized.index, y=df_normalized.columns,
-                      labels={'x': 'Year', 'y': 'Categories'},
-                      title='Stacked Area Chart with Normalized Values',
-                      color_discrete_sequence=px.colors.qualitative.Plotly)
-
-        fig.update_traces(mode='lines+markers')
-        fig.update_layout(legend_title_text='Categories', plot_bgcolor=TRANSPARENT, paper_bgcolor=TRANSPARENT)
+        # Créer une figure
+        fig = go.Figure()
+        
+        # Ajouter chaque catégorie comme une série d'aires empilées
+        for i, col in enumerate(df_percentage.columns):
+            fig.add_trace(go.Scatter(
+                x=df_percentage.index,
+                y=df_percentage[col],
+                mode='lines',
+                stackgroup='one',
+                name=col,
+                line=dict(width=0),
+                fillcolor=color_sequence[i],
+                hoverinfo='skip'  # Désactiver le hover standard
+            ))
+        
+        # Créer textes personnalisés pour le hover
+        hover_texts = []
+        for year in df_percentage.index:
+            text = f"Année : {year}<br>"
+            for col in df_percentage.columns:
+                value = df_percentage.loc[year, col]
+                text += f"{col} : {value:.1f}%<br>"
+            hover_texts.append(text)
+        
+        # Ajouter une trace invisible avec le hover personnalisé
+        fig.add_trace(go.Scatter(
+            x=df_percentage.index,
+            y=[50] * len(df_percentage),  # Au milieu du graphique
+            mode='markers',
+            marker=dict(opacity=0),  # Invisible
+            hoverinfo='text',
+            hovertext=hover_texts,
+            showlegend=False,
+        ))
+        
+        # Configurer le layout
+        fig.update_layout(
+            # Enlever le titre
+            title=None,
+            # Agrandir le graphique
+            height=700,
+            width=1200,
+            xaxis=dict(
+                # Enlever le "Year"
+                title=None,
+                showgrid=False,
+                showspikes=True,  # Afficher une ligne verticale au survol
+                spikecolor='black',
+                spikethickness=1,
+                spikedash='solid',
+                spikemode='across'
+            ),
+            yaxis=dict(
+                title={'text': 'Percentage (%)', 'font': {'family': 'Jost', 'size': 16}},
+                showgrid=False,
+                # Correction du format pour afficher correctement 0-100%
+                tickformat='.0f',  # Format sans % et sans multiplier par 100
+                ticksuffix='%',    # Ajouter le symbole % après chaque valeur
+                range=[0, 100],    # Garder l'échelle de 0 à 100
+                tickfont={'family': 'Jost'}
+            ),
+            legend_title={
+                'text': 'Categories',
+                'font': {'family': 'Jost', 'size': 16}
+            },
+            legend={'font': {'family': 'Jost', 'size': 14}},
+            hovermode='x',  # Hover mode sur l'axe x
+            hoverdistance=100,  # Distance pour activer le hover
+            hoverlabel=dict(
+                bgcolor='white', 
+                font_size=16,
+                font_family='Jost'
+            ),
+            plot_bgcolor=TRANSPARENT,
+            paper_bgcolor=TRANSPARENT,
+            font={'family': 'Jost'},  # Police par défaut pour tout le graphique
+            margin=dict(l=50, r=50, t=30, b=50)  # Ajuster les marges pour maximiser l'espace
+        )
         
         return fig

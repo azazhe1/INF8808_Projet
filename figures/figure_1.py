@@ -1,12 +1,10 @@
 import math 
 
-import plotly.colors as pc
-import plotly.express as px
 import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
-from helper import TRANSPARENT
+from helper import TRANSPARENT, generate_color_dict
 
 class WaffleChart():
 
@@ -66,6 +64,7 @@ class WaffleChart():
         )
 
         return fig 
+    
     
     def plot_scatter_waffle_chart(self, distribution, df, category, font_size=16, font_family='Jost'):
 
@@ -142,73 +141,7 @@ class WaffleChart():
             hovertemplate += ['Name: ' + id]* distribution[id]
         return hovertemplate
 
-def generate_color_dict(identifiers=None, n_colors=None, colorscale_name='Set1'):
-    """
-    Generate a dictionary mapping identifiers to colors from a Plotly colorscale
-    
-    Parameters:
-    -----------
-    identifiers : list, optional
-        List of category identifiers to map to colors
-    n_colors : int, optional
-        Number of colors to generate if identifiers not provided
-    colorscale_name : str, default='Set1'
-        Name of the Plotly colorscale to use
-        Options include: 'Plotly', 'D3', 'G10', 'T10', 'Alphabet', 
-        'Dark24', 'Light24', 'Set1', 'Set2', 'Set3', 'Pastel1', 'Pastel2'
-    
-    Returns:
-    --------
-    dict
-        Dictionary mapping each identifier to a color
-    """
-    # Determine number of colors needed
-    if identifiers is not None:
-        n_colors = len(identifiers)
-    elif n_colors is None:
-        raise ValueError("Either identifiers or n_colors must be provided")
-    
-    # Get colors from the specified colorscale
-    try:
-        # For qualitative/discrete colorscales
-        if colorscale_name in ['Plotly', 'D3', 'G10', 'T10', 'Alphabet', 
-                              'Dark24', 'Light24', 'Set1', 'Set2', 'Set3', 
-                              'Pastel1', 'Pastel2']:
-            colors = getattr(pc.qualitative, colorscale_name)
-            # Repeat colors if we need more than available
-            colors = (colors * (n_colors // len(colors) + 1))[:n_colors]
-        else:
-            # For continuous colorscales, sample n_colors from the scale
-            colorscale = getattr(px.colors.sequential, colorscale_name, None)
-            if colorscale is None:
-                colorscale = getattr(px.colors.diverging, colorscale_name, None)
-            if colorscale is None:
-                colorscale = getattr(px.colors.cyclical, colorscale_name, None)
-            if colorscale is None:
-                # Default to built-in continuous colorscale and sample it
-                color_positions = np.linspace(0, 1, n_colors)
-                colorscale = px.colors.sample_colorscale(colorscale_name, color_positions)
-                colors = colorscale
-            else:
-                # For color lists from sequential/diverging modules
-                step = max(1, len(colorscale) // n_colors)
-                colors = colorscale[::step][:n_colors]
-                # Add more if needed
-                if len(colors) < n_colors:
-                    indices = np.linspace(0, len(colorscale)-1, n_colors-len(colors)).astype(int)
-                    colors.extend([colorscale[i] for i in indices])
-    except (AttributeError, ValueError):
-        # Fallback to default colorscale
-        color_positions = np.linspace(0, 1, n_colors)
-        colors = px.colors.sample_colorscale("Viridis", color_positions)
-    
-    # Create the mapping
-    if identifiers is not None:
-        color_dict = {id_val: colors[i % len(colors)] for i, id_val in enumerate(identifiers)}
-    else:
-        color_dict = {i: colors[i % len(colors)] for i in range(n_colors)}
-        
-    return color_dict
+
 
 # Function to lighten color by mixing with white
 # def lighten_color(color, amount=0.8):  # amount: 0=original, 1=white

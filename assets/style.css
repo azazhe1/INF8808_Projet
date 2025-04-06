@@ -194,4 +194,24 @@ button:hover, button:active {
     font-size: 14px;
 }
 
+.figure-title {
+    margin-bottom: 30px;
+    text-align: center;
+    font-family: Jost;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+.radio-filter {
+    margin: 10px 0;
+    font-family: Jost, sans-serif;
+}
+
+.radio-filter label {
+    margin-right: 20px;
+    color: black;
+    font-size: 14px;
+}
+
 

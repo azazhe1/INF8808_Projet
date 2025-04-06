@@ -38,7 +38,8 @@ app.layout = \
             # Figure 1
             html.Div(children=[
 
-                html.H3('Lors des 97 cérémonies des Oscars, il y a eu 416 gagnants. Voici leur distribution.'),
+                html.H3('Lors des 97 cérémonies des Oscars, il y a eu 416 gagnants. Voici leur distribution.',
+                       className='figure-title'),
 
                 html.Div([
                     dcc.Tabs(
@@ -53,6 +54,20 @@ app.layout = \
                         ],
                         className='dash-tabs'
                     ),
+
+                    # Add radio buttons for Figure 1
+                    html.Div([
+                        dcc.RadioItems(
+                            id='winner-filter_fig_1',
+                            options=[
+                                {'label': 'Gagnants seulement', 'value': 'winners'},
+                                {'label': 'Gagnants et nominés', 'value': 'all'}
+                            ],
+                            value='winners',
+                            inline=True,
+                            className='radio-filter'
+                        )
+                    ], style={'margin': '10px 0'}),
 
                     dcc.Checklist(
                         id='category-checklist_fig_1',
@@ -79,12 +94,13 @@ app.layout = \
             ),
 
             # Espace entre les figures
-            html.Div(style={'height': '50px', 'width': '100%', 'clear': 'both'}),
+            html.Div(style={'height': '150px', 'width': '100%', 'clear': 'both'}),
 
             # Figure 4
             html.Div(children=[
 
-                html.H3('TEST TEST'),
+                html.H3('L\'évolution de la diversité aux Oscars à travers les décennies.', 
+                       className='figure-title'),
 
                 html.Div([
                     dcc.Tabs(
@@ -99,6 +115,20 @@ app.layout = \
                         ],
                         className='dash-tabs'
                     ),
+
+                    # Add radio buttons for Figure 4
+                    html.Div([
+                        dcc.RadioItems(
+                            id='winner-filter_fig_4',
+                            options=[
+                                {'label': 'Gagnants seulement', 'value': 'winners'},
+                                {'label': 'Gagnants et nominés', 'value': 'all'}
+                            ],
+                            value='winners',
+                            inline=True,
+                            className='radio-filter'
+                        )
+                    ], style={'margin': '10px 0'}),
 
                     dcc.Checklist(
                         id='category-checklist_fig_4',
@@ -148,18 +178,14 @@ distribution_dict, total = dataloader.get_unique_distribution(df)
     Output('category-checklist_fig_1', 'value'),
     Input('year-slider_fig_1', 'value'),
     Input('tabs_fig_1', 'value'),
+    Input('winner-filter_fig_1', 'value'),
 )
-def update_category_dropdown_fig_1(year_range, category):
-    df = dataloader.filter_data(year_range[0], year_range[1])
+def update_category_dropdown_fig_1(year_range, category, winner_filter):
+    # Filter by winners only or all nominees based on radio button value
+    is_winner = None if winner_filter == 'all' else True
+    df = dataloader.filter_data(year_range[0], year_range[1], is_winner=is_winner)
     distribution_dict, _ = dataloader.get_unique_distribution(df)
     return [{'label': key, 'value': key} for key in distribution_dict[category].keys()], list(distribution_dict[category].keys())[:5]
-    # # On ajoute une option Other pour les catégories qui n'ont pas été sélectionnées
-    # checklist = [{'label': key, 'value': key} for key in distribution_dict[category].keys()] + [{'label': 'Other', 'value': 'Other'}]
-    # selected_categories = list(distribution_dict[category].keys())[:5]
-    # # Si il y a plus de 5 catégories, on sélectionne les 5 premières + Other
-    # if len(distribution_dict[category]) > 5:
-    #     selected_categories += ['Other']
-    # return checklist, selected_categories
 
 # Callback pour change waffle-chart en fonction de la valeur de category-checklist
 @app.callback(
@@ -167,10 +193,12 @@ def update_category_dropdown_fig_1(year_range, category):
     Input('year-slider_fig_1', 'value'),
     Input('tabs_fig_1', 'value'),
     Input('category-checklist_fig_1', 'value'),
+    Input('winner-filter_fig_1', 'value'),
     allow_duplicate=True
 )
-def update_waffle_chart(year_range, category, selected_categories):
-    df = dataloader.filter_data(year_range[0], year_range[1])
+def update_waffle_chart(year_range, category, selected_categories, winner_filter):
+    is_winner = None if winner_filter == 'all' else True
+    df = dataloader.filter_data(year_range[0], year_range[1], is_winner=is_winner)
     distribution_dict, _ = dataloader.get_unique_distribution(df)
     wchart = figure_1.WaffleChart()
     return wchart.plot_scatter_waffle_chart({key: distribution_dict[category][key] for key in selected_categories}, df, category)
@@ -180,9 +208,11 @@ def update_waffle_chart(year_range, category, selected_categories):
     Output('category-checklist_fig_4', 'value'),
     Input('year-slider_fig_4', 'value'),
     Input('tabs_fig_4', 'value'),
+    Input('winner-filter_fig_4', 'value'),
 )
-def update_category_dropdown_fig_4(year_range, category):
-    df = dataloader.filter_data(year_range[0], year_range[1])
+def update_category_dropdown_fig_4(year_range, category, winner_filter):
+    is_winner = None if winner_filter == 'all' else True
+    df = dataloader.filter_data(year_range[0], year_range[1], is_winner=is_winner)
     distribution_dict, _ = dataloader.get_unique_distribution(df)    
     # On ajoute une option Other pour les catégories qui n'ont pas été sélectionnées
     checklist = [{'label': key, 'value': key} for key in distribution_dict[category].keys()] + [{'label': 'Other', 'value': 'Other'}]
@@ -197,10 +227,12 @@ def update_category_dropdown_fig_4(year_range, category):
     Input('year-slider_fig_4', 'value'),
     Input('tabs_fig_4', 'value'),
     Input('category-checklist_fig_4', 'value'),
+    Input('winner-filter_fig_4', 'value'),
     allow_duplicate=True
 )
-def update_stacked_area_chart(year_range, category, selected_categories):
-    df = dataloader.filter_data(year_range[0], year_range[1])
+def update_stacked_area_chart(year_range, category, selected_categories, winner_filter):
+    is_winner = None if winner_filter == 'all' else True
+    df = dataloader.filter_data(year_range[0], year_range[1], is_winner=is_winner)
     # On ne garde que l'année et la colonne de la catégorie
     distribution_dict = dataloader.get_yearly_distribution(df[['Year_Ceremony', category]], selected_categories)
     stacked_chart = figure_4.StackedAreaChart()
