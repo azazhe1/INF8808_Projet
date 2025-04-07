@@ -5,14 +5,14 @@ import plotly.express as px
 import numpy as np
 
     
-# Define custom colors for the markers in your Waffle chart
+# Définition des couleurs personnalisées pour les marqueurs dans le diagramme en gaufre
 CUSTOM_COLORS = [
-    '#FFFFFF',  # White
-    '#000000',  # Black
+    '#FFFFFF',  # Blanc
+    '#000000',  # Noir
     '#BE8F4D',  # Bronze
-    '#FFDA6E',  # Gold
+    '#FFDA6E',  # Or
     '#C56D65',  # Rose
-    '#593A1E'   # Brown
+    '#593A1E'   # Marron
 ]
 
 TRANSPARENT = 'rgba(0,0,0,0)'
@@ -34,22 +34,22 @@ class DataLoader():
     
     def filter_data(self, start_year, end_year, is_winner=None):
         """
-        Filter the data based on the start and end years and winner status.
+        Filtre les données en fonction des années de début et de fin et du statut de gagnant.
         
         Args:
-            start_year (int): The start year for filtering
-            end_year (int): The end year for filtering
-            is_winner (bool, optional): If True, only winners are included. 
-                                      If False, only non-winners. 
-                                      If None, both winners and nominees are included.
+            start_year (int): L'année de début pour le filtrage
+            end_year (int): L'année de fin pour le filtrage
+            is_winner (bool, optional): Si True, seuls les gagnants sont inclus. 
+                                      Si False, seuls les non-gagnants. 
+                                      Si None, les gagnants et les nominés sont inclus.
         
         Returns:
-            pandas.DataFrame: The filtered dataframe
+            pandas.DataFrame: Le dataframe filtré
         """
         filtered_df = self.data[(self.data['Year_Ceremony'] >= start_year) & 
                               (self.data['Year_Ceremony'] <= end_year)]
         
-        # Apply the winner filter if specified
+        # Appliquer le filtre de gagnant si spécifié
         if is_winner is not None:
             filtered_df = filtered_df[filtered_df['Win_Oscar?'] == is_winner]
             
@@ -57,6 +57,8 @@ class DataLoader():
     
     def get_unique_distribution(self, data):
         """ 
+        Calcule la distribution des valeurs uniques pour chaque colonne.
+        
         Exemple de résultat attendu:
         (
         {'Straight': 246,
@@ -103,10 +105,10 @@ class DataLoader():
         df = df.astype(int)
         df = df.reindex(sorted(df.columns), axis=1)
         distribution_dict = {year: row.to_dict() for year, row in df.iterrows()}
-        # Sort by year
+        # Trier par année
         distribution_dict = dict(sorted(distribution_dict.items(), key=lambda item: item[0]))
 
-        # Si on a besoin, on ajoute une catégorie "Other" qui contient la somme des autres catégories
+        # Si nécessaire, on ajoute une catégorie "Autre" qui contient la somme des autres catégories
         need_other = False
         if selected_categories is not None:
             if 'Other' in selected_categories:
@@ -125,76 +127,76 @@ class DataLoader():
 
 # def generate_color_dict():
 #     return {
-#         'White': '#FFFFFF',   # White
-#         'Black': '#000000',   # Black
-#         'Asian': '#BE8F4D',   # Brown
-#         'Hispanic': '#FFDA6E', # Yellow
-#         'Other': '#C56D65',   # Reddish
-#         'Mixed': '#593A1E'    # Dark Brown
+#         'White': '#FFFFFF',   # Blanc
+#         'Black': '#000000',   # Noir
+#         'Asian': '#BE8F4D',   # Marron
+#         'Hispanic': '#FFDA6E', # Jaune
+#         'Other': '#C56D65',   # Rougeâtre
+#         'Mixed': '#593A1E'    # Marron foncé
 #     }
 
 
 def generate_color_dict(identifiers=None, n_colors=None, colorscale_name='Set1'):
     """
-    Generate a dictionary mapping identifiers to colors from a Plotly colorscale
+    Génère un dictionnaire associant des identifiants à des couleurs à partir d'une échelle de couleurs Plotly
     
-    Parameters:
+    Paramètres:
     -----------
-    identifiers : list, optional
-        List of category identifiers to map to colors
-    n_colors : int, optional
-        Number of colors to generate if identifiers not provided
-    colorscale_name : str, default='Set1'
-        Name of the Plotly colorscale to use
-        Options include: 'Plotly', 'D3', 'G10', 'T10', 'Alphabet', 
+    identifiers : liste, optionnel
+        Liste des identifiants de catégories à associer aux couleurs
+    n_colors : int, optionnel
+        Nombre de couleurs à générer si les identifiants ne sont pas fournis
+    colorscale_name : str, par défaut='Set1'
+        Nom de l'échelle de couleurs Plotly à utiliser
+        Options incluent: 'Plotly', 'D3', 'G10', 'T10', 'Alphabet', 
         'Dark24', 'Light24', 'Set1', 'Set2', 'Set3', 'Pastel1', 'Pastel2'
     
-    Returns:
+    Retourne:
     --------
     dict
-        Dictionary mapping each identifier to a color
+        Dictionnaire associant chaque identifiant à une couleur
     """
-    # Determine number of colors needed
+    # Déterminer le nombre de couleurs nécessaires
     if identifiers is not None:
         n_colors = len(identifiers)
     elif n_colors is None:
-        raise ValueError("Either identifiers or n_colors must be provided")
+        raise ValueError("Soit les identifiants, soit le nombre de couleurs doivent être fournis")
     
-    # Get colors from the specified colorscale
+    # Obtenir des couleurs à partir de l'échelle de couleurs spécifiée
     try:
-        # For qualitative/discrete colorscales
+        # Pour les échelles de couleurs qualitatives/discrètes
         if colorscale_name in ['Plotly', 'D3', 'G10', 'T10', 'Alphabet', 
                               'Dark24', 'Light24', 'Set1', 'Set2', 'Set3', 
                               'Pastel1', 'Pastel2']:
             colors = getattr(pc.qualitative, colorscale_name)
-            # Repeat colors if we need more than available
+            # Répéter les couleurs si nous avons besoin de plus que disponibles
             colors = (colors * (n_colors // len(colors) + 1))[:n_colors]
         else:
-            # For continuous colorscales, sample n_colors from the scale
+            # Pour les échelles de couleurs continues, échantillonner n_colors
             colorscale = getattr(px.colors.sequential, colorscale_name, None)
             if colorscale is None:
                 colorscale = getattr(px.colors.diverging, colorscale_name, None)
             if colorscale is None:
                 colorscale = getattr(px.colors.cyclical, colorscale_name, None)
             if colorscale is None:
-                # Default to built-in continuous colorscale and sample it
+                # Par défaut, utiliser l'échelle de couleurs continue intégrée et l'échantillonner
                 color_positions = np.linspace(0, 1, n_colors)
                 colorscale = px.colors.sample_colorscale(colorscale_name, color_positions)
                 colors = colorscale
             else:
-                # For color lists from sequential/diverging modules
+                # Pour les listes de couleurs des modules sequential/diverging
                 step = max(1, len(colorscale) // n_colors)
                 colors = colorscale[::step][:n_colors]
-                # Add more if needed
+                # Ajouter plus si nécessaire
                 if len(colors) < n_colors:
                     indices = np.linspace(0, len(colorscale)-1, n_colors-len(colors)).astype(int)
                     colors.extend([colorscale[i] for i in indices])
     except (AttributeError, ValueError):
-        # Fallback to default colorscale
+        # Repli sur l'échelle de couleurs par défaut
         color_positions = np.linspace(0, 1, n_colors)
         colors = px.colors.sample_colorscale("Viridis", color_positions)
     
-    # Create the mapping
+    # Créer la correspondance
     if identifiers is not None:
         color_dict = {id_val: colors[i % len(colors)] for i, id_val in enumerate(identifiers)}
     else:

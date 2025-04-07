@@ -7,4 +7,4 @@ FIGURE 4 :
 - 
 
 GLOBAL :
-- Est ce qu'on utilise un seul slider, une seule ligne d'onglet et une seule liste de check list ? Ou bien une par figure ?
+- Est-ce qu'on utilise un seul slider, une seule ligne d'onglets et une seule liste de cases à cocher ? Ou bien une par figure ?

@@ -48,8 +48,8 @@ main {
 
 div.texte-entete {
     display: flex;
-    flex-direction: column;   /* Align items vertically in a column */
-    justify-content: center;  /* Center horizontally */
+    flex-direction: column;   /* Aligner les éléments verticalement en colonne */
+    justify-content: center;  /* Centrer horizontalement */
    padding: 20px;
 }
 
@@ -170,11 +170,11 @@ button:hover, button:active {
 }
 
 .dash-tabs {
-    background-color: #f0f0f0; /* Background color for the tabs container */
+    background-color: #f0f0f0; /* Couleur d'arrière-plan pour le conteneur des onglets */
 }
 
 .dash-tab {
-    color: black; /* Default text color for tabs */
+    color: black; /* Couleur de texte par défaut pour les onglets */
     font-family: Jost, sans-serif;
     font-size: 16px;
     padding: 10px;
@@ -183,13 +183,13 @@ button:hover, button:active {
 }
 
 .dash-tab--selected {
-    color: white; /* Text color for selected tab */
-    background-color: black; /* Background color for selected tab */
+    color: white; /* Couleur de texte pour l'onglet sélectionné */
+    background-color: black; /* Couleur d'arrière-plan pour l'onglet sélectionné */
     font-weight: bold;
 }
 
 .dash-checklist label {
-    color: black; /* Text color for checklist labels */
+    color: black; /* Couleur de texte pour les étiquettes de la liste à cocher */
     font-family: Jost, sans-serif;
     font-size: 14px;
 }

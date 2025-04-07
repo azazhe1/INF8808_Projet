@@ -93,7 +93,7 @@ class StackedAreaChart():
                 spikemode='across'
             ),
             yaxis=dict(
-                title={'text': 'Percentage (%)', 'font': {'family': 'Jost', 'size': 16}},
+                title={'text': 'Proportion (%)', 'font': {'family': 'Jost', 'size': 16}},
                 showgrid=False,
                 # Correction du format pour afficher correctement 0-100%
                 tickformat='.0f',  # Format sans % et sans multiplier par 100
@@ -102,7 +102,7 @@ class StackedAreaChart():
                 tickfont={'family': 'Jost'}
             ),
             legend_title={
-                'text': 'Categories',
+                'text': 'Catégories',
                 'font': {'family': 'Jost', 'size': 16}
             },
             legend={'font': {'family': 'Jost', 'size': 14}},

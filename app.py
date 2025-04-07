@@ -15,7 +15,7 @@ FONT = 'Jost'
 
 app = dash.Dash(__name__)
 
-default_range = [1928, 2025]
+intervalle_defaut = [1928, 2025]
 
 app.layout = \
     html.Div([
@@ -31,7 +31,7 @@ app.layout = \
                     className="texte-entete"
                     ),
         ]),
-        # TODO Modifier le layout 
+        # TODO Modifier la mise en page
         
         html.Main(children=[
             
@@ -49,13 +49,13 @@ app.layout = \
                             dcc.Tab(label='Ethnie', value='Race or Ethnicity', className='dash-tab', selected_className='dash-tab--selected'),
                             dcc.Tab(label='Genre', value='Gender', className='dash-tab', selected_className='dash-tab--selected'),
                             dcc.Tab(label='Religion', value='Religion', className='dash-tab', selected_className='dash-tab--selected'),
-                            dcc.Tab(label='Age', value='Age', className='dash-tab', selected_className='dash-tab--selected'),
+                            dcc.Tab(label='Âge', value='Age', className='dash-tab', selected_className='dash-tab--selected'),
                             dcc.Tab(label='Orientation', value='Sexual orientation', className='dash-tab', selected_className='dash-tab--selected')
                         ],
                         className='dash-tabs'
                     ),
 
-                    # Add radio buttons for Figure 1
+                    # Ajout des boutons radio pour la Figure 1
                     html.Div([
                         dcc.RadioItems(
                             id='winner-filter_fig_1',
@@ -85,7 +85,7 @@ app.layout = \
                         max=2025,
                         step=1,
                         marks={i: '{}'.format(i) for i in range(1928, 2025, 10)},
-                        value= default_range,
+                        value= intervalle_defaut,
                         allowCross=False
                     )
                 ], style={'width': '100%', 'margin': '0 auto'}),
@@ -110,13 +110,13 @@ app.layout = \
                             dcc.Tab(label='Ethnie', value='Race or Ethnicity', className='dash-tab', selected_className='dash-tab--selected'),
                             dcc.Tab(label='Genre', value='Gender', className='dash-tab', selected_className='dash-tab--selected'),
                             dcc.Tab(label='Religion', value='Religion', className='dash-tab', selected_className='dash-tab--selected'),
-                            dcc.Tab(label='Age', value='Age', className='dash-tab', selected_className='dash-tab--selected'),
+                            dcc.Tab(label='Âge', value='Age', className='dash-tab', selected_className='dash-tab--selected'),
                             dcc.Tab(label='Orientation', value='Sexual orientation', className='dash-tab', selected_className='dash-tab--selected')
                         ],
                         className='dash-tabs'
                     ),
 
-                    # Add radio buttons for Figure 4
+                    # Ajout des boutons radio pour la Figure 4
                     html.Div([
                         dcc.RadioItems(
                             id='winner-filter_fig_4',
@@ -146,7 +146,7 @@ app.layout = \
                         max=2025,
                         step=1,
                         marks={i: '{}'.format(i) for i in range(1928, 2025, 10)},
-                        value= default_range,
+                        value= intervalle_defaut,
                         allowCross=False
                     )
                 ], style={'width': '100%', 'margin': '0 auto'}),
@@ -172,7 +172,7 @@ dataloader.preprocess_data()
 df = dataloader.filter_data(1928, 2025)
 distribution_dict, total = dataloader.get_unique_distribution(df)
 
-# callback pour afficher une liste de bouton en fonction de la valeur de Tabs
+# Callback pour afficher une liste de boutons en fonction de la valeur des onglets
 @app.callback(
     Output('category-checklist_fig_1', 'options'),
     Output('category-checklist_fig_1', 'value'),
@@ -181,13 +181,13 @@ distribution_dict, total = dataloader.get_unique_distribution(df)
     Input('winner-filter_fig_1', 'value'),
 )
 def update_category_dropdown_fig_1(year_range, category, winner_filter):
-    # Filter by winners only or all nominees based on radio button value
+    # Filtrer par gagnants uniquement ou tous les nominés selon la valeur du bouton radio
     is_winner = None if winner_filter == 'all' else True
     df = dataloader.filter_data(year_range[0], year_range[1], is_winner=is_winner)
     distribution_dict, _ = dataloader.get_unique_distribution(df)
     return [{'label': key, 'value': key} for key in distribution_dict[category].keys()], list(distribution_dict[category].keys())[:5]
 
-# Callback pour change waffle-chart en fonction de la valeur de category-checklist
+# Callback pour changer le waffle-chart en fonction de la valeur de category-checklist
 @app.callback(
     Output('waffle-chart', 'figure'),
     Input('year-slider_fig_1', 'value'),
@@ -239,7 +239,7 @@ def update_stacked_area_chart(year_range, category, selected_categories, winner_
     return stacked_chart.plot_stacked_area_chart(distribution_dict)
 
 
-# TODO Rajouter call back des autres figures 
+# TODO Ajouter les callbacks des autres figures 
 
 if __name__ == '__main__':
     app.run(port=8070, debug=True)
