@@ -13,7 +13,48 @@ print('hello')
 
 FONT = 'Jost'
 
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, 
+                meta_tags=[
+                    {"name": "viewport", "content": "width=device-width, initial-scale=1"},
+                    {"name": "description", "content": "Analyse de la diversité aux Oscars"}
+                ],
+                # Ajout des balises pour configurer le favicon
+                update_title=None)
+
+# Modification du titre de l'onglet du navigateur
+app.title = "Oscars - Analyse de diversité"
+
+# Ajout du favicon dans le layout
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+        {%metas%}
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+        <link rel="shortcut icon" type="image/x-icon" href="assets/favicon.ico">
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>
+'''
+
+# Crédit logo
+logo_credit = html.A(
+    "Oscar icons created by Freepik - Flaticon",
+    href='https://www.flaticon.com/free-icons/oscar',
+    title='oscar icons',
+    target='_blank',
+    style={'color': '#555', 'textDecoration': 'underline'}
+)
 
 intervalle_defaut = [1928, 2025]
 
@@ -96,6 +137,114 @@ app.layout = \
             # Espace entre les figures
             html.Div(style={'height': '150px', 'width': '100%', 'clear': 'both'}),
 
+            # Figure 2 (placeholder)
+            html.Div(children=[
+                html.H3('Figure 2 - Placeholder pour visualisation future', 
+                       className='figure-title'),
+
+                html.Div([
+                    dcc.Tabs(
+                        id='tabs_fig_2',
+                        value='Race or Ethnicity',
+                        children=[
+                            dcc.Tab(label='Ethnie', value='Race or Ethnicity', className='dash-tab', selected_className='dash-tab--selected'),
+                            dcc.Tab(label='Genre', value='Gender', className='dash-tab', selected_className='dash-tab--selected'),
+                            dcc.Tab(label='Religion', value='Religion', className='dash-tab', selected_className='dash-tab--selected'),
+                            dcc.Tab(label='Âge', value='Age', className='dash-tab', selected_className='dash-tab--selected'),
+                            dcc.Tab(label='Orientation', value='Sexual orientation', className='dash-tab', selected_className='dash-tab--selected')
+                        ],
+                        className='dash-tabs'
+                    ),
+
+                    # Contrôles pour la figure 2
+                    html.Div([
+                        dcc.RadioItems(
+                            id='winner-filter_fig_2',
+                            options=[
+                                {'label': 'Gagnants seulement', 'value': 'winners'},
+                                {'label': 'Gagnants et nominés', 'value': 'all'}
+                            ],
+                            value='winners',
+                            inline=True,
+                            className='radio-filter'
+                        )
+                    ], style={'margin': '10px 0'}),
+
+                    # Placeholder pour la figure 2
+                    dcc.Graph(id='figure-2-graph', style={'width': '100%'}),
+
+                    # Slider pour la plage d'années
+                    dcc.RangeSlider(
+                        id='year-slider_fig_2',
+                        min=1928,
+                        max=2025,
+                        step=1,
+                        marks={i: '{}'.format(i) for i in range(1928, 2025, 10)},
+                        value=intervalle_defaut,
+                        allowCross=False
+                    )
+                ], style={'width': '100%', 'margin': '0 auto'}),
+            ],
+            style={'margin': '0 auto', 'width': '100%', 'fontFamily': FONT, 'display': 'block', 'textAlign': 'center'}
+            ),
+
+            # Espace entre les figures
+            html.Div(style={'height': '150px', 'width': '100%', 'clear': 'both'}),
+
+            # Figure 3 (placeholder)
+            html.Div(children=[
+                html.H3('Figure 3 - Placeholder pour visualisation future',
+                       className='figure-title'),
+
+                html.Div([
+                    dcc.Tabs(
+                        id='tabs_fig_3',
+                        value='Race or Ethnicity',
+                        children=[
+                            dcc.Tab(label='Ethnie', value='Race or Ethnicity', className='dash-tab', selected_className='dash-tab--selected'),
+                            dcc.Tab(label='Genre', value='Gender', className='dash-tab', selected_className='dash-tab--selected'),
+                            dcc.Tab(label='Religion', value='Religion', className='dash-tab', selected_className='dash-tab--selected'),
+                            dcc.Tab(label='Âge', value='Age', className='dash-tab', selected_className='dash-tab--selected'),
+                            dcc.Tab(label='Orientation', value='Sexual orientation', className='dash-tab', selected_className='dash-tab--selected')
+                        ],
+                        className='dash-tabs'
+                    ),
+
+                    # Contrôles pour la figure 3
+                    html.Div([
+                        dcc.RadioItems(
+                            id='winner-filter_fig_3',
+                            options=[
+                                {'label': 'Gagnants seulement', 'value': 'winners'},
+                                {'label': 'Gagnants et nominés', 'value': 'all'}
+                            ],
+                            value='winners',
+                            inline=True,
+                            className='radio-filter'
+                        )
+                    ], style={'margin': '10px 0'}),
+
+                    # Placeholder pour la figure 3
+                    dcc.Graph(id='figure-3-graph', style={'width': '100%'}),
+
+                    # Slider pour la plage d'années
+                    dcc.RangeSlider(
+                        id='year-slider_fig_3',
+                        min=1928,
+                        max=2025,
+                        step=1,
+                        marks={i: '{}'.format(i) for i in range(1928, 2025, 10)},
+                        value=intervalle_defaut,
+                        allowCross=False
+                    )
+                ], style={'width': '100%', 'margin': '0 auto'}),
+            ],
+            style={'margin': '0 auto', 'width': '100%', 'fontFamily': FONT, 'display': 'block', 'textAlign': 'center'}
+            ),
+
+            # Espace entre les figures
+            html.Div(style={'height': '150px', 'width': '100%', 'clear': 'both'}),
+
             # Figure 4
             html.Div(children=[
 
@@ -154,16 +303,33 @@ app.layout = \
             ],
             style={'margin': '0 auto', 'width': '100%', 'fontFamily': FONT, 'display': 'block', 'textAlign': 'center'}
             ),
+
+            # Espace après la dernière figure
+            html.Div(style={'height': '150px', 'width': '100%', 'clear': 'both'}),
         ],
         style={'width': '90%', 'margin': '0 auto', 'fontFamily': FONT, 'display': 'flex', 'flexDirection': 'column'}
         ),
-       
 
+        
+        # Ajout d'un footer pour les crédits du logo et des créateurs
+        html.Footer([
+            html.Div([
+                # Crédit du logo
+                html.Div([
+                    html.P("Crédit logo: ", style={'fontWeight': 'bold', 'display': 'inline'}),
+                    logo_credit
+                ], style={'marginBottom': '10px'}),
+                
+                # Crédit des créateurs
+                html.Div([
+                    html.P("Groupe 10 : ", style={'fontWeight': 'bold', 'display': 'inline'}),
+                    html.P("Carolina Espinosa - Léo Valette - Nino Montoya - Jean Vincent - Zhu David - Nkondog Yvan Aristide", style={'display': 'inline'})
+                ])
+            ], style={'textAlign': 'center', 'padding': '20px', 'borderTop': '1px solid #ccc', 'marginTop': '30px'})
+        ])
         
     ],
     style={'width': '80%', 'margin': 'auto', 'fontFamily': FONT})
-
-
 
 # Figure 1
 dataloader = DataLoader()
@@ -240,6 +406,8 @@ def update_stacked_area_chart(year_range, category, selected_categories, winner_
 
 
 # TODO Ajouter les callbacks des autres figures 
+# Placeholder callbacks pour les figures 2 et 3
+# Ces callbacks seront à implémenter lorsque les figures seront développées
 
 if __name__ == '__main__':
     app.run(port=8070, debug=True)
