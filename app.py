@@ -130,8 +130,8 @@ app.layout = \
                         allowCross=False
                     )
                 ], style={'width': '100%', 'margin': '0 auto'}),
-                ],
-                style={'margin': '0 auto', 'width': '100%', 'fontFamily': FONT, 'display': 'block', 'textAlign': 'center'}
+            ],
+            style={'margin': '0 auto', 'width': '100%', 'fontFamily': FONT, 'display': 'block', 'textAlign': 'center'}
             ),
 
             # Espace entre les figures
@@ -276,16 +276,15 @@ app.layout = \
                             value='winners',
                             inline=True,
                             className='radio-filter'
+                        ),
+                        dcc.Checklist(
+                            id='category-checklist_fig_4',
+                            options=[],
+                            value=[],
+                            inline=True,
+                            className='dash-checklist'
                         )
                     ], style={'margin': '10px 0'}),
-
-                    dcc.Checklist(
-                        id='category-checklist_fig_4',
-                        options=[],
-                        value=[],
-                        inline=True,
-                        className='dash-checklist'
-                    ),
 
                     dcc.Graph(id='stacked-area-chart', style={'width': '100%'}),
 
@@ -348,6 +347,7 @@ distribution_dict, total = dataloader.get_unique_distribution(df)
 )
 def update_category_dropdown_fig_1(year_range, category, winner_filter):
     # Filtrer par gagnants uniquement ou tous les nominés selon la valeur du bouton radio
+    # TODO : Trier les catégories par nombre de représentants
     is_winner = None if winner_filter == 'all' else True
     df = dataloader.filter_data(year_range[0], year_range[1], is_winner=is_winner)
     distribution_dict, _ = dataloader.get_unique_distribution(df)

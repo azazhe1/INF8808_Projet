@@ -36,7 +36,7 @@ class StackedAreaChart():
         df_percentage = df_normalized * 100
         
         # Obtenir les couleurs pour chaque catégorie
-        color_dict = generate_color_dict(identifiers=df_normalized.columns, colorscale_name='Pastel2')
+        color_dict = generate_color_dict(identifiers=df_normalized.columns, colorscale_name='Oranges')
         color_sequence = [color_dict[cat] for cat in df_normalized.columns]
 
         # Créer une figure
@@ -80,8 +80,9 @@ class StackedAreaChart():
             # Enlever le titre
             title=None,
             # Agrandir le graphique
-            height=700,
-            width=1200,
+            # height=700,
+            # width=1200,
+            autosize=True,
             xaxis=dict(
                 # Enlever le "Year"
                 title=None,
