@@ -104,76 +104,14 @@ app.layout = \
             # Espace entre les figures
             html.Div(style={'height': '150px', 'width': '100%', 'clear': 'both'}),
 
-            # Figure 3 (placeholder)
-            html.Div(children=[
-                html.H3('Figure 3 - Placeholder pour visualisation future',
-                       className='figure-title'),
-
-                html.Div([
-                    dcc.Tabs(
-                        id='tabs_fig_3',
-                        value='Race or Ethnicity',
-                        children=[
-                            dcc.Tab(label='Ethnie', value='Race or Ethnicity', className='dash-tab', selected_className='dash-tab--selected'),
-                            dcc.Tab(label='Genre', value='Gender', className='dash-tab', selected_className='dash-tab--selected'),
-                            dcc.Tab(label='Religion', value='Religion', className='dash-tab', selected_className='dash-tab--selected'),
-                            dcc.Tab(label='Âge', value='Age', className='dash-tab', selected_className='dash-tab--selected'),
-                            dcc.Tab(label='Orientation', value='Sexual orientation', className='dash-tab', selected_className='dash-tab--selected')
-                        ],
-                        className='dash-tabs'
-                    ),
-                    
-                    # Placeholder pour la figure 3
-                    dcc.Graph(id='line-chart', style={'width': '100%'}),
-                    ],style={}),
-
-                    # Contrôles pour la figure 3
-                    
-                    html.Div ([
-                    
-                    html.P('Utilisez ces filtres pour visualiser plus de données:'),
-                    
-                    html.Div([
-                        dcc.RadioItems(
-                            id='winner-filter_fig_3',
-                            options=[
-                                {'label': 'Gagnants seulement', 'value': 'winners'},
-                                {'label': 'Gagnants et nominés', 'value': 'all'}
-                            ],
-                            value='winners',
-                            inline=True,
-                            className='radio-filter'
-                        ),
-
-                        dcc.Checklist(
-                            id='category-checklist_fig_3',
-                            options=[],
-                            value=[],
-                            inline=True,
-                            className='dash-checklist'
-                        ),
-
-                    # Placeholder pour la figure 3
-                    dcc.Graph(id='line-chart', style={'width': '100%'}),
-
-                    # Slider pour la plage d'années
-
-                    # Slider pour la plage d'années
-                    dcc.RangeSlider(
-                        id='year-slider_fig_3',
-                        min=1928,
-                        max=2025,
-                        step=1,
-                        marks={i: '{}'.format(i) for i in range(1928, 2025, 10)},
-                        value=intervalle_defaut,
-                        allowCross=False
-                    )
-                    ], style={'margin': '10px 0', 'flex': '1'}),
-
-                    
-                ], style={'width': '100%', 'margin': '0 auto'}),
-            ],
-            style={'margin': '0 auto', 'width': '100%', 'fontFamily': FONT, 'display': 'block', 'textAlign': 'center'}
+            # Figure 3
+            create_figure_section(
+                figure_id=3,
+                title='Évolution de la diversité au fil des ans',
+                graph_id='line-chart',
+                has_checklist=True,
+                intervalle=intervalle_defaut,
+                font=FONT
             ),
             
             # Espace entre les figures
@@ -292,16 +230,10 @@ def update_waffle_chart(year_range, category, selected_categories, winner_filter
     Input('winner-filter_fig_3', 'value'),
 )
 def update_category_dropdown_fig_3(year_range, category, winner_filter):
-    is_winner = None if winner_filter == 'all' else True
-    df = dataloader.filter_data(year_range[0], year_range[1], is_winner=is_winner)
-    distribution_dict, _ = dataloader.get_unique_distribution(df)
-
-    checklist = [{'label': key, 'value': key} for key in distribution_dict[category].keys()] + [{'label': 'Other', 'value': 'Other'}]
-    selected_categories = list(distribution_dict[category].keys())[:5]
-
-    if len(distribution_dict[category]) > 5:
-        selected_categories += ['Other']
-    return checklist, selected_categories
+    df, distribution_dict, options, selected = get_filtered_distribution(
+        year_range, category, winner_filter, include_other=True
+    )
+    return options, selected
 
 @app.callback(
     Output('line-chart', 'figure'),
@@ -315,13 +247,21 @@ def update_line_chart(year_range, category, selected_categories, winner_filter):
     is_winner = None if winner_filter == 'all' else True
     df = dataloader.filter_data(year_range[0], year_range[1], is_winner=is_winner)
     
-    distribution_dict, _ = dataloader.get_unique_distribution(df)
+    # Pour les données détaillées que nous allons afficher dans le hover
+    hover_df = df.copy()
+    
+    # Utiliser get_yearly_distribution pour obtenir les données agrégées
+    distribution_dict = dataloader.get_yearly_distribution(
+        df[['Year_Ceremony', category]], 
+        selected_categories,
+        time_granularity=1
+    )
     
     # Initialize the line chart object
     line_chart = figure_3.LineChart()
     
-    # Render the line chart
-    return line_chart.plot_line_chart(distribution_dict, category, selected_categories, df)
+    # Render the line chart with both distribution and detailed data
+    return line_chart.plot_line_chart(distribution_dict, category, selected_categories, hover_df)
 
 # Figure 4 
 
