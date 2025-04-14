@@ -414,7 +414,12 @@ def update_waffle_chart(year_range, category, selected_categories, winner_filter
     df = dataloader.filter_data(year_range[0], year_range[1], is_winner=is_winner)
     distribution_dict, _ = dataloader.get_unique_distribution(df)
     wchart = figure_1.WaffleChart()
-    return wchart.plot_scatter_waffle_chart({key: distribution_dict[category][key] for key in selected_categories}, df, category)
+    class_num_dict = {key: distribution_dict[category][key] for key in selected_categories}
+    # sort the dictionary by value
+    sorted_dict = dict(sorted(class_num_dict.items(), key=lambda item: item[1], reverse=True))
+    return wchart.plot_scatter_waffle_chart(sorted_dict, df, category)
+    # raise ValueError({key: distribution_dict[category][key] for key in selected_categories})
+    # return wchart.plot_scatter_waffle_chart({key: distribution_dict[category][key] for key in selected_categories}, df, category)
 
 # Figure 3
 
