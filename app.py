@@ -95,9 +95,13 @@ app.layout = \
                         ],
                         className='dash-tabs'
                     ),
-
+                    dcc.Graph(id='waffle-chart', style={'width': '100%','margin': '40px 0'}),
+                    
+                    
                     # Ajout des boutons radio pour la Figure 1
-                    html.Div([
+                    html.Div ([
+                        html.Div([
+                        html.P('Utilisez ces filtres pour visualiser plus de données:'),
                         dcc.RadioItems(
                             id='winner-filter_fig_1',
                             options=[
@@ -107,20 +111,22 @@ app.layout = \
                             value='winners',
                             inline=True,
                             className='radio-filter'
-                        )
-                    ], style={'margin': '10px 0'}),
-
-                    dcc.Checklist(
+                                        )
+                    ], style={'flex': '1', 'padding': '10px'}),
+                    
+                    html.Div ([
+                        html.P('Filtres:'),
+                        dcc.Checklist(
                         id='category-checklist_fig_1',
                         options=[],
                         value=[],
                         inline=True,
                         className='dash-checklist'
-                    ),
+                    )], style={'flex': '1', 'padding': '10px'}),
 
-                    dcc.Graph(id='waffle-chart', style={'width': '100%'}),
-
-                    dcc.RangeSlider(
+                    html.Div ([
+                        html.P('Années:'),
+                        dcc.RangeSlider(
                         id='year-slider_fig_1',
                         min=1928,
                         max=2025,
@@ -129,6 +135,12 @@ app.layout = \
                         value= intervalle_defaut,
                         allowCross=False
                     )
+                    ], style={'flex': '1', 'padding': '10px'})
+                        
+                        
+                        ],style={'margin': '20px 0', 'display' : 'flex', 'flexDirection' : 'row'})
+                    
+                   
                 ], style={'width': '100%', 'margin': '0 auto'}),
             ],
             style={'margin': '0 auto', 'width': '100%', 'fontFamily': FONT, 'display': 'block', 'textAlign': 'center'}
@@ -221,8 +233,19 @@ app.layout = \
                         ],
                         className='dash-tabs'
                     ),
+                    
+                        # Placeholder pour la figure 3
+                    dcc.Graph(id='figure-3-graph', style={'width': '100%'}),
+                    ],style={}),
 
                     # Contrôles pour la figure 3
+                    
+                    
+                    html.Div ([
+                    
+
+                    html.P('Utilisez ces filtres pour visualiser plus de données:'),
+                    
                     html.Div([
                         dcc.RadioItems(
                             id='winner-filter_fig_3',
@@ -233,13 +256,9 @@ app.layout = \
                             value='winners',
                             inline=True,
                             className='radio-filter'
-                        )
-                    ], style={'margin': '10px 0'}),
-
-                    # Placeholder pour la figure 3
-                    dcc.Graph(id='figure-3-graph', style={'width': '100%'}),
-
-                    # Slider pour la plage d'années
+                        ),
+                        
+                        # Slider pour la plage d'années
                     dcc.RangeSlider(
                         id='year-slider_fig_3',
                         min=1928,
@@ -249,6 +268,9 @@ app.layout = \
                         value=intervalle_defaut,
                         allowCross=False
                     )
+                    ], style={'margin': '10px 0', 'flex': '1'}),
+
+                    
                 ], style={'width': '100%', 'margin': '0 auto'}),
             ],
             style={'margin': '0 auto', 'width': '100%', 'fontFamily': FONT, 'display': 'block', 'textAlign': 'center'}
