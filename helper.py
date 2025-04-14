@@ -84,25 +84,33 @@ class DataLoader():
 
         return result_dict, total
     
-    def get_yearly_distribution(self, data, selected_categories=None):
+    def get_yearly_distribution(self, data, selected_categories=None, time_granularity=1):
         """
-        Fonction qui retourne un dictionnaire contenant la distribution des valeurs uniques pour chaque année.
+        Fonction qui retourne un dictionnaire contenant la distribution des valeurs uniques pour chaque année ou période.
         En entrée elle prend un dataframe contenant la colonne étudiée ainsi que la colonne Year_Ceremony.
-
-        Exemple de dataframe:
-         data:      Year_Ceremony      Race or Ethnicity
-                    1928                White
-                    1928                White
-                    1928                White
-
-        Exemple de résultat attendu:
-        {
-            1928: {'Straight': 4, 'Na': 1},
-            1929: {'Straight': 3, 'Na': 1},
-            ...
-        }
+        
+        Paramètres:
+        -----------
+        data : pandas.DataFrame
+            DataFrame contenant les données à analyser avec les colonnes Year_Ceremony et la catégorie étudiée
+        selected_categories : list, optionnel
+            Liste des catégories à inclure. Si 'Other' est présent, les catégories non sélectionnées seront regroupées
+        time_granularity : int, par défaut=1
+            Granularité temporelle: 1 pour année par année, 5 pour tranches de 5 ans, 10 pour décennies
+            
+        Retourne:
+        --------
+        dict
+            Dictionnaire de la forme {période: {catégorie1: valeur1, catégorie2: valeur2, ...}}
         """
         df = data.copy()
+        
+        # Appliquer la granularité temporelle
+        if time_granularity > 1:
+            # Arrondir les années à la granularité spécifiée
+            # Par exemple: pour time_granularity=10, 1928 -> 1920, 1934 -> 1930
+            df['Year_Ceremony'] = (df['Year_Ceremony'] // time_granularity) * time_granularity
+        
         df = df.groupby(['Year_Ceremony', df.columns[1]]).size().unstack(fill_value=0)
         df = df.astype(int)
         df = df.reindex(sorted(df.columns), axis=1)

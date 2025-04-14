@@ -66,7 +66,7 @@ class WaffleChart():
         return fig 
     
     
-    def plot_scatter_waffle_chart(self, distribution, df, category, font_size=16, font_family='Jost'):
+    def plot_scatter_waffle_chart(self, distribution, df, category, font_size=16, font_family='Jost', height=700):
 
         # distribution = distribution_dict[category]
         fig = make_subplots(rows=1, cols=len(distribution),
@@ -125,15 +125,13 @@ class WaffleChart():
                 )
             )
 
-        # fig.update_layout(height=800)
-        # width = min(400 * len(distribution), 1200)
-        # fig.update_layout(width=width, height=800)
-        # fig.update_layout(height=700,  width=width, plot_bgcolor=TRANSPARENT, paper_bgcolor=TRANSPARENT)
-        # Autosize
-        fig.update_layout(autosize=True, plot_bgcolor=TRANSPARENT, paper_bgcolor=TRANSPARENT)
-
-        # fig tight layout
-        fig.update_layout(margin=dict(l=0, r=0, t=0, b=10))
+        fig.update_layout(
+            height=height,  # Utiliser la hauteur passée en paramètre
+            autosize=False,  # Désactiver l'autosize pour appliquer la hauteur fixe
+            plot_bgcolor=TRANSPARENT, 
+            paper_bgcolor=TRANSPARENT,
+            margin=dict(l=0, r=0, t=0, b=10)
+        )
 
         return fig 
     

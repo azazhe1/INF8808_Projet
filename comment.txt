@@ -3,15 +3,16 @@ FIGURE 1 :
 - Les points sont trop petit quand il y en a beacoup
 
 FIGURE 4 :
-- Ajouter l'option de grouper les données par 1, 5 ou 10 ans
+- Ajouter l'option de grouper les données par 1, 5 ou 10 ans - FAIT
 - Changer en "heatmap de points"
 
 GLOBAL :
 - Ajouter le choix de ne pouvoir voir que les gagnants - FAIT
-- Est-ce qu'on utilise un seul slider, une seule ligne d'onglets et une seule liste de cases à cocher ? Ou bien une par figure ?
-- On pourrait ajouter des configuration "par défaut" pour chaque figure qui viseraient à montrer quelque chose en particulier, il y aurait aussi un petit texte qui commente le graphique.
-- Changer la taille en %
+- Est-ce qu'on utilise un seul slider, une seule ligne d'onglets et une seule liste de cases à cocher ? Ou bien une par figure ? - NON
+- On pourrait ajouter des configuration "par défaut" pour chaque figure qui viseraient à montrer quelque chose en particulier, 
+il y aurait aussi un petit texte qui commente le graphique.
+- Changer la taille en % - FAIT
 - Ajouter les "catégories" de nommination
 - Ajouter une description "alt"
-- Changer couleur tabs et boutons
-- Bouger la timeline avec les options
+- Changer couleur tabs et boutons - FAIT
+- Bouger la timeline avec les options - FAIT

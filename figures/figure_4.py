@@ -14,7 +14,7 @@ class StackedAreaChart():
     def __init__(self):
         pass
 
-    def plot_stacked_area_chart(self, data):
+    def plot_stacked_area_chart(self, data, height=700):
         """
         Cette fonction génère un graphique en aires empilées à partir des données fournies.
         Exemple de données:
@@ -79,10 +79,9 @@ class StackedAreaChart():
         fig.update_layout(
             # Enlever le titre
             title=None,
-            # Agrandir le graphique
-            # height=700,
-            # width=1200,
-            autosize=True,
+            # Définir une hauteur fixe
+            height=height,
+            autosize=False,
             xaxis=dict(
                 # Enlever le "Year"
                 title=None,
