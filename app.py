@@ -5,6 +5,7 @@ from dash import html
 from dash.dependencies import Input, Output
 
 import figures.figure_1 as figure_1
+import figures.figure_3 as figure_3
 import figures.figure_4 as figure_4
 
 from helper import DataLoader
@@ -234,16 +235,14 @@ app.layout = \
                         className='dash-tabs'
                     ),
                     
-                        # Placeholder pour la figure 3
-                    dcc.Graph(id='figure-3-graph', style={'width': '100%'}),
+                    # Placeholder pour la figure 3
+                    dcc.Graph(id='line-chart', style={'width': '100%'}),
                     ],style={}),
 
                     # Contrôles pour la figure 3
                     
-                    
                     html.Div ([
                     
-
                     html.P('Utilisez ces filtres pour visualiser plus de données:'),
                     
                     html.Div([
@@ -257,8 +256,21 @@ app.layout = \
                             inline=True,
                             className='radio-filter'
                         ),
-                        
-                        # Slider pour la plage d'années
+
+                        dcc.Checklist(
+                            id='category-checklist_fig_3',
+                            options=[],
+                            value=[],
+                            inline=True,
+                            className='dash-checklist'
+                        ),
+
+                    # Placeholder pour la figure 3
+                    dcc.Graph(id='line-chart', style={'width': '100%'}),
+
+                    # Slider pour la plage d'années
+
+                    # Slider pour la plage d'années
                     dcc.RangeSlider(
                         id='year-slider_fig_3',
                         min=1928,
@@ -364,12 +376,13 @@ app.layout = \
     ],
     style={'width': '80%', 'margin': 'auto', 'fontFamily': FONT})
 
-# Figure 1
 dataloader = DataLoader()
 dataloader.load_data('assets/The_Oscar_Award_Demographics_1928-2025 - The_Oscar_Award_Demographics_1928-2025_v3.csv')
 dataloader.preprocess_data()
 df = dataloader.filter_data(1928, 2025)
 distribution_dict, total = dataloader.get_unique_distribution(df)
+
+# Figure 1
 
 # Callback pour afficher une liste de boutons en fonction de la valeur des onglets
 @app.callback(
@@ -402,6 +415,49 @@ def update_waffle_chart(year_range, category, selected_categories, winner_filter
     distribution_dict, _ = dataloader.get_unique_distribution(df)
     wchart = figure_1.WaffleChart()
     return wchart.plot_scatter_waffle_chart({key: distribution_dict[category][key] for key in selected_categories}, df, category)
+
+# Figure 3
+
+@app.callback(
+    Output('category-checklist_fig_3', 'options'),
+    Output('category-checklist_fig_3', 'value'),
+    Input('year-slider_fig_3', 'value'),
+    Input('tabs_fig_3', 'value'),
+    Input('winner-filter_fig_3', 'value'),
+)
+def update_category_dropdown_fig_3(year_range, category, winner_filter):
+    is_winner = None if winner_filter == 'all' else True
+    df = dataloader.filter_data(year_range[0], year_range[1], is_winner=is_winner)
+    distribution_dict, _ = dataloader.get_unique_distribution(df)
+
+    checklist = [{'label': key, 'value': key} for key in distribution_dict[category].keys()] + [{'label': 'Other', 'value': 'Other'}]
+    selected_categories = list(distribution_dict[category].keys())[:5]
+
+    if len(distribution_dict[category]) > 5:
+        selected_categories += ['Other']
+    return checklist, selected_categories
+
+@app.callback(
+    Output('line-chart', 'figure'),
+    Input('year-slider_fig_3', 'value'),
+    Input('tabs_fig_3', 'value'),
+    Input('category-checklist_fig_3', 'value'),
+    Input('winner-filter_fig_3', 'value'),
+    allow_duplicate=True
+)
+def update_line_chart(year_range, category, selected_categories, winner_filter):
+    is_winner = None if winner_filter == 'all' else True
+    df = dataloader.filter_data(year_range[0], year_range[1], is_winner=is_winner)
+    
+    distribution_dict, _ = dataloader.get_unique_distribution(df)
+    
+    # Initialize the line chart object
+    line_chart = figure_3.LineChart()
+    
+    # Render the line chart
+    return line_chart.plot_line_chart(distribution_dict, category, selected_categories, df)
+
+# Figure 4 
 
 @app.callback(
     Output('category-checklist_fig_4', 'options'),
@@ -437,7 +493,6 @@ def update_stacked_area_chart(year_range, category, selected_categories, winner_
     distribution_dict = dataloader.get_yearly_distribution(df[['Year_Ceremony', category]], selected_categories)
     stacked_chart = figure_4.StackedAreaChart()
     return stacked_chart.plot_stacked_area_chart(distribution_dict)
-
 
 # TODO Ajouter les callbacks des autres figures 
 # Placeholder callbacks pour les figures 2 et 3
