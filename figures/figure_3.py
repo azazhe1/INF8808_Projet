@@ -9,7 +9,7 @@ class LineChart():
     def __init__(self):
         pass
 
-    def plot_line_chart(self, distribution_dict, category, selected_categories, df, cumulative=True, scale_type='linear'):
+    def plot_line_chart(self, distribution_dict, category, selected_categories, df, cumulative=True, scale_type='linear', height=700):
         """
         Cette fonction génère un graphique en lignes montrant l'évolution d'une catégorie au fil du temps.
         
@@ -20,6 +20,7 @@ class LineChart():
         - df : DataFrame contenant les colonnes 'Year_Ceremony', category, 'Name', 'Film'
         - cumulative : booléen indiquant si les données doivent être affichées de manière cumulative
         - scale_type : type d'échelle pour l'axe Y ('linear' ou 'log')
+        - height : hauteur du graphique en pixels (par défaut: 700)
 
         Retourne : 
         - figure Plotly de type line chart
@@ -114,6 +115,7 @@ class LineChart():
             shapes=shapes,  # Utiliser la liste de formes conditionnelle
             # Configuration générale
             autosize=True,
+            height=height,  # Ajout de la hauteur spécifiée
             paper_bgcolor=TRANSPARENT,  # Fond transparent
             plot_bgcolor=TRANSPARENT,   # Fond du graphique transparent
             xaxis=dict(

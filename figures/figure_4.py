@@ -22,6 +22,10 @@ class StackedAreaChart():
         1929: {'White': 17, 'Black': 0, 'Hispanic': 0, 'Asian': 0, 'Multiracial': 0, 'Other': 0}, 
         1930: {'White': 17, 'Black': 0, 'Hispanic': 0, 'Asian': 0, 'Multiracial': 0, 'Other': 0}}
 
+Args:
+            data: Dictionnaire de données par année et catégorie
+            height: Hauteur du graphique (défaut: 700px)
+
         Retourne la figure
         """
 
@@ -60,8 +64,9 @@ class StackedAreaChart():
         for year in df_percentage.index:
             text = f"Année : {year}<br>"
             for col in df_percentage.columns:
-                value = df_percentage.loc[year, col]
-                text += f"{col} : {value:.1f}%<br>"
+                percentage = df_percentage.loc[year, col]
+                absolute = df.loc[year, col]  # Valeur absolue
+                text += f"{col} : {percentage:.1f}% ({int(absolute)})<br>"
             hover_texts.append(text)
         
         # Ajouter une trace invisible avec le hover personnalisé

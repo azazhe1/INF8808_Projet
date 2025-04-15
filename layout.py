@@ -28,69 +28,80 @@ def create_figure_section(figure_id, title, graph_id, has_checklist=True, interv
             inline=True,
             className='radio-filter'
         )
-    ], style={'flex': '1', 'padding': '10px'}) if figure_id == 4 else None
+    ], className='control-item', style={'padding': '10px'}) if figure_id == 4 else None
     
-    controls = html.Div([
-        # Filtres (gauche)
-        html.Div([
-            html.P('Utilisez ces filtres pour visualiser plus de données:'),
-            dcc.RadioItems(
-                id=f'winner-filter_fig_{figure_id}',
-                options=[
-                    {'label': 'Gagnants seulement', 'value': 'winners'},
-                    {'label': 'Gagnants et nominés', 'value': 'all'}
-                ],
-                value='winners',
-                inline=True,
-                className='radio-filter'
-            )
-        ], style={'flex': '1', 'padding': '10px'}),
-        
-        # Checklist (centre) - optionnelle
-        html.Div([
-            html.P('Filtres:'),
-            dcc.Checklist(
-                id=f'category-checklist_fig_{figure_id}',
-                options=[],
-                value=[],
-                inline=True,
-                className='dash-checklist'
-            )
-        ], style={'flex': '1', 'padding': '10px'}) if has_checklist else None,
-
-        # Slider des années (droite)
-        html.Div([
-            html.P('Années:'),
-            dcc.RangeSlider(
-                id=f'year-slider_fig_{figure_id}',
-                min=1928,
-                max=2025,
-                step=1,
-                marks={i: '{}'.format(i) for i in range(1928, 2025, 10)},
-                value=intervalle,
-                allowCross=False
-            )
-        ], style={'flex': '1', 'padding': '10px'}),
-        
-        # Ajouter le sélecteur de granularité si applicable
-        granularity_selector,
-        
-        # Ajouter le sélecteur d'échelle logarithmique pour la figure 3 uniquement
-        html.Div([
-            html.P('Échelle:'),
-            dcc.RadioItems(
-                id=f'scale-selector_fig_{figure_id}',
-                options=[
-                    {'label': 'Linéaire', 'value': 'linear'},
-                    {'label': 'Logarithmique', 'value': 'log'}
-                ],
-                value='linear',
-                inline=True,
-                className='radio-filter'
-            )
-        ], style={'flex': '1', 'padding': '10px'}) if figure_id == 3 else None
-        
-    ], style={'margin': '20px 0', 'display': 'flex', 'flexDirection': 'row'})
+    # Élément pour les filtres (gagnants/nominés)
+    winners_filter = html.Div([
+        html.P('Utilisez ces filtres pour visualiser plus de données:'),
+        dcc.RadioItems(
+            id=f'winner-filter_fig_{figure_id}',
+            options=[
+                {'label': 'Gagnants seulement', 'value': 'winners'},
+                {'label': 'Gagnants et nominés', 'value': 'all'}
+            ],
+            value='winners',
+            inline=True,
+            className='radio-filter'
+        )
+    ], className='control-item', style={'padding': '10px'})
+    
+    # Élément pour la checklist (optionnel)
+    checklist = html.Div([
+        html.P('Filtres:'),
+        dcc.Checklist(
+            id=f'category-checklist_fig_{figure_id}',
+            options=[],
+            value=[],
+            inline=True,
+            className='dash-checklist'
+        )
+    ], className='control-item', style={'padding': '10px'}) if has_checklist else None
+    
+    # Élément pour le slider d'années
+    year_slider = html.Div([
+        html.P('Années:'),
+        dcc.RangeSlider(
+            id=f'year-slider_fig_{figure_id}',
+            min=1928,
+            max=2025,
+            step=1,
+            marks={i: '{}'.format(i) for i in range(1928, 2025, 10)},
+            value=intervalle,
+            allowCross=False
+        )
+    ], className='control-item year-slider', style={'padding': '10px'})
+    
+    # Élément pour le sélecteur d'échelle (figure 3 uniquement)
+    scale_selector = html.Div([
+        html.P('Échelle:'),
+        dcc.RadioItems(
+            id=f'scale-selector_fig_{figure_id}',
+            options=[
+                {'label': 'Linéaire', 'value': 'linear'},
+                {'label': 'Logarithmique', 'value': 'log'}
+            ],
+            value='linear',
+            inline=True,
+            className='radio-filter'
+        )
+    ], className='control-item', style={'padding': '10px'}) if figure_id == 3 else None
+    
+    # Assembler les contrôles actifs dans une liste
+    control_elements = [winners_filter]
+    if checklist:
+        control_elements.append(checklist)
+    control_elements.append(year_slider)
+    if granularity_selector:
+        control_elements.append(granularity_selector)
+    if scale_selector:
+        control_elements.append(scale_selector)
+    
+    # Conteneur des contrôles avec classe pour le responsive
+    controls = html.Div(
+        control_elements,
+        className='controls-container',
+        style={'margin': '20px 0'}
+    )
     
     # Remplacer la section de contrôles existante par notre nouvelle version
     return html.Div(children=[
@@ -115,7 +126,6 @@ def create_figure_section(figure_id, title, graph_id, has_checklist=True, interv
 
             # Graphique
             dcc.Graph(id=graph_id, style={'width': '100%', 'margin': '40px 0'}),
-            # dcc.Graph(id=graph_id, style={'width': '100%', 'margin': '40px 0' if figure_id == 1 else '0'}),
             
             # Controls
             controls,

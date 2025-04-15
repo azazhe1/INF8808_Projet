@@ -4,7 +4,7 @@ FIGURE 1 :
 
 FIGURE 4 :
 - Ajouter l'option de grouper les données par 1, 5 ou 10 ans - FAIT
-- Changer en "heatmap de points"
+- Changer en "heatmap de points" - PAS FORCEMENT BESOIN
 
 GLOBAL :
 - Ajouter le choix de ne pouvoir voir que les gagnants - FAIT
@@ -13,6 +13,6 @@ GLOBAL :
 il y aurait aussi un petit texte qui commente le graphique.
 - Changer la taille en % - FAIT
 - Ajouter les "catégories" de nommination
-- Ajouter une description "alt"
+- Ajouter une description "alt" - PAS REUSSI
 - Changer couleur tabs et boutons - FAIT
 - Bouger la timeline avec les options - FAIT

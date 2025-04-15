@@ -244,4 +244,65 @@ button:hover, button:active {
     font-size: 14px;
 }
 
+/* Styles pour les contrôles responsive */
+.controls-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.control-item {
+    flex: 1;
+    min-width: 200px;
+}
+
+.year-slider {
+    flex: 2;  /* Le slider d'années prend plus d'espace */
+    min-width: 300px;
+}
+
+/* Media queries pour l'adaptabilité */
+@media screen and (max-width: 1200px) {
+    /* Styles pour les écrans jusqu'à 1200px de large */
+    .controls-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .control-item {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    
+    /* Ajuster la taille des onglets */
+    .dash-tab {
+        font-size: 14px;
+        padding: 8px;
+    }
+    
+    /* Ajuster la figure-title */
+    .figure-title {
+        font-size: 24px;
+    }
+}
+
+
+/* Styles spécifiques pour les sliders */
+.rc-slider {
+    width: 100% !important;
+}
+
+/* Améliorer l'affichage des checkboxes */
+.dash-checklist {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.dash-checklist .form-check {
+    margin-right: 15px;
+    min-width: 100px;
+}
+
 

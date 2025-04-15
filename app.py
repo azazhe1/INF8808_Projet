@@ -16,6 +16,8 @@ print('hello')
 
 FONT = 'Jost'
 
+hauteur_default_figure = 700
+
 app = dash.Dash(__name__, 
                 meta_tags=[
                     {"name": "viewport", "content": "width=device-width, initial-scale=1"},
@@ -216,7 +218,7 @@ def update_waffle_chart(year_range, category, selected_categories, winner_filter
     class_num_dict = {key: distribution_dict[category][key] for key in selected_categories}
     # sort the dictionary by value
     sorted_dict = dict(sorted(class_num_dict.items(), key=lambda item: item[1], reverse=True))
-    return wchart.plot_scatter_waffle_chart(sorted_dict, df, category)
+    return wchart.plot_scatter_waffle_chart(sorted_dict, df, category, height=hauteur_default_figure)
     # raise ValueError({key: distribution_dict[category][key] for key in selected_categories})
     # return wchart.plot_scatter_waffle_chart({key: distribution_dict[category][key] for key in selected_categories}, df, category)
 
@@ -262,7 +264,15 @@ def update_line_chart(year_range, category, selected_categories, winner_filter, 
     line_chart = figure_3.LineChart()
     
     # Render the line chart with cumulative data and selected scale type
-    return line_chart.plot_line_chart(distribution_dict, category, selected_categories, hover_df, cumulative=True, scale_type=scale_type)
+    return line_chart.plot_line_chart(
+        distribution_dict, 
+        category, 
+        selected_categories, 
+        hover_df, 
+        cumulative=True, 
+        scale_type=scale_type,
+        height=hauteur_default_figure  # Ajout du paramètre de hauteur
+    )
 
 # Figure 4 
 
@@ -302,10 +312,18 @@ def update_stacked_area_chart(year_range, category, selected_categories, winner_
     
     stacked_chart = figure_4.StackedAreaChart()
     # Spécifier la hauteur souhaitée
-    return stacked_chart.plot_stacked_area_chart(
+    fig = stacked_chart.plot_stacked_area_chart(
         distribution_dict,
-        height=700  # Hauteur en pixels
+        height=hauteur_default_figure  # Hauteur en pixels
     )
+    
+    # Ajuster la mise en page selon la taille de l'écran
+    fig.update_layout(
+        autosize=True,
+        margin=dict(l=30, r=30, t=30, b=50)  # Marges réduites pour les petits écrans
+    )
+    
+    return fig
 
 
 if __name__ == '__main__':
