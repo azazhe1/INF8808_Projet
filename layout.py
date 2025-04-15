@@ -73,7 +73,22 @@ def create_figure_section(figure_id, title, graph_id, has_checklist=True, interv
         ], style={'flex': '1', 'padding': '10px'}),
         
         # Ajouter le sélecteur de granularité si applicable
-        granularity_selector
+        granularity_selector,
+        
+        # Ajouter le sélecteur d'échelle logarithmique pour la figure 3 uniquement
+        html.Div([
+            html.P('Échelle:'),
+            dcc.RadioItems(
+                id=f'scale-selector_fig_{figure_id}',
+                options=[
+                    {'label': 'Linéaire', 'value': 'linear'},
+                    {'label': 'Logarithmique', 'value': 'log'}
+                ],
+                value='linear',
+                inline=True,
+                className='radio-filter'
+            )
+        ], style={'flex': '1', 'padding': '10px'}) if figure_id == 3 else None
         
     ], style={'margin': '20px 0', 'display': 'flex', 'flexDirection': 'row'})
     
@@ -102,8 +117,8 @@ def create_figure_section(figure_id, title, graph_id, has_checklist=True, interv
             dcc.Graph(id=graph_id, style={'width': '100%', 'margin': '40px 0'}),
             # dcc.Graph(id=graph_id, style={'width': '100%', 'margin': '40px 0' if figure_id == 1 else '0'}),
             
-            # Controls (section modifiée)
-            controls
+            # Controls
+            controls,
             
         ], style={'width': '100%', 'margin': '0 auto'}),
     ],

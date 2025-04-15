@@ -241,9 +241,10 @@ def update_category_dropdown_fig_3(year_range, category, winner_filter):
     Input('tabs_fig_3', 'value'),
     Input('category-checklist_fig_3', 'value'),
     Input('winner-filter_fig_3', 'value'),
+    Input('scale-selector_fig_3', 'value'),  # Nouvel input pour l'échelle
     allow_duplicate=True
 )
-def update_line_chart(year_range, category, selected_categories, winner_filter):
+def update_line_chart(year_range, category, selected_categories, winner_filter, scale_type):
     is_winner = None if winner_filter == 'all' else True
     df = dataloader.filter_data(year_range[0], year_range[1], is_winner=is_winner)
     
@@ -260,8 +261,8 @@ def update_line_chart(year_range, category, selected_categories, winner_filter):
     # Initialize the line chart object
     line_chart = figure_3.LineChart()
     
-    # Render the line chart with cumulative data
-    return line_chart.plot_line_chart(distribution_dict, category, selected_categories, hover_df, cumulative=True)
+    # Render the line chart with cumulative data and selected scale type
+    return line_chart.plot_line_chart(distribution_dict, category, selected_categories, hover_df, cumulative=True, scale_type=scale_type)
 
 # Figure 4 
 

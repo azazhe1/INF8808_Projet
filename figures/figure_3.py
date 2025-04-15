@@ -9,7 +9,7 @@ class LineChart():
     def __init__(self):
         pass
 
-    def plot_line_chart(self, distribution_dict, category, selected_categories, df, cumulative=True):
+    def plot_line_chart(self, distribution_dict, category, selected_categories, df, cumulative=True, scale_type='linear'):
         """
         Cette fonction génère un graphique en lignes montrant l'évolution d'une catégorie au fil du temps.
         
@@ -19,6 +19,7 @@ class LineChart():
         - selected_categories : liste des catégories sélectionnées à afficher
         - df : DataFrame contenant les colonnes 'Year_Ceremony', category, 'Name', 'Film'
         - cumulative : booléen indiquant si les données doivent être affichées de manière cumulative
+        - scale_type : type d'échelle pour l'axe Y ('linear' ou 'log')
 
         Retourne : 
         - figure Plotly de type line chart
@@ -129,7 +130,8 @@ class LineChart():
                 title={'text': 'Nombre cumulé' if cumulative else 'Nombre', 'font': {'family': 'Jost', 'size': 16}},
                 showgrid=True,
                 gridcolor='rgba(0,0,0,0.1)',
-                tickfont={'family': 'Jost'}
+                tickfont={'family': 'Jost'},
+                type=scale_type  # Définir le type d'échelle (linéaire ou logarithmique)
             ),
             legend_title={
                 'text': 'Catégories',
