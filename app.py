@@ -250,8 +250,8 @@ def update_line_chart(year_range, category, selected_categories, winner_filter):
     # Pour les données détaillées que nous allons afficher dans le hover
     hover_df = df.copy()
     
-    # Utiliser get_yearly_distribution pour obtenir les données agrégées
-    distribution_dict = dataloader.get_yearly_distribution(
+    # Utiliser get_cumulative_yearly_distribution pour obtenir les données cumulatives
+    distribution_dict = dataloader.get_cumulative_yearly_distribution(
         df[['Year_Ceremony', category]], 
         selected_categories,
         time_granularity=1
@@ -260,8 +260,8 @@ def update_line_chart(year_range, category, selected_categories, winner_filter):
     # Initialize the line chart object
     line_chart = figure_3.LineChart()
     
-    # Render the line chart with both distribution and detailed data
-    return line_chart.plot_line_chart(distribution_dict, category, selected_categories, hover_df)
+    # Render the line chart with cumulative data
+    return line_chart.plot_line_chart(distribution_dict, category, selected_categories, hover_df, cumulative=True)
 
 # Figure 4 
 

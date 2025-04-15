@@ -134,6 +134,48 @@ class DataLoader():
 
         return distribution_dict
 
+    def get_cumulative_yearly_distribution(self, data, selected_categories=None, time_granularity=1):
+        """
+        Fonction qui retourne un dictionnaire contenant la distribution cumulative des valeurs 
+        pour chaque année ou période.
+        
+        Paramètres:
+        -----------
+        data : pandas.DataFrame
+            DataFrame contenant les données à analyser avec les colonnes Year_Ceremony et la catégorie étudiée
+        selected_categories : list, optionnel
+            Liste des catégories à inclure. Si 'Other' est présent, les catégories non sélectionnées seront regroupées
+        time_granularity : int, par défaut=1
+            Granularité temporelle: 1 pour année par année, 5 pour tranches de 5 ans, 10 pour décennies
+            
+        Retourne:
+        --------
+        dict
+            Dictionnaire de la forme {période: {catégorie1: valeur_cumulative1, catégorie2: valeur_cumulative2, ...}}
+        """
+        # D'abord, obtenir la distribution non-cumulative année par année
+        yearly_distribution = self.get_yearly_distribution(data, selected_categories, time_granularity)
+        
+        # Convertir en dataframe pour faciliter le calcul cumulatif
+        years = sorted(yearly_distribution.keys())
+        categories = list(set().union(*[d.keys() for d in yearly_distribution.values()]))
+        
+        # Créer un DataFrame vide avec années comme index et catégories comme colonnes
+        cumulative_df = pd.DataFrame(index=years, columns=categories).fillna(0)
+        
+        # Remplir avec les valeurs annuelles
+        for year, dist in yearly_distribution.items():
+            for category, count in dist.items():
+                cumulative_df.loc[year, category] = count
+        
+        # Calculer les valeurs cumulatives
+        cumulative_df = cumulative_df.cumsum()
+        
+        # Convertir le DataFrame en dictionnaire
+        cumulative_dict = {year: row.to_dict() for year, row in cumulative_df.iterrows()}
+        
+        return cumulative_dict
+
 
 # def generate_color_dict():
 #     return {

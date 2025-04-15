@@ -1,9 +1,7 @@
-# TODO rajouter figure
-
 import pandas as pd
 import plotly.graph_objects as go
-
-from helper import TRANSPARENT
+import numpy as np
+from helper import TRANSPARENT, generate_color_dict
 
 # Line Chart Showing the Evolution of a Category Over Time
 
@@ -11,58 +9,89 @@ class LineChart():
     def __init__(self):
         pass
 
-    def plot_line_chart(self, distribution_dict, category, selected_categories, df):
+    def plot_line_chart(self, distribution_dict, category, selected_categories, df, cumulative=True):
         """
         Cette fonction génère un graphique en lignes montrant l'évolution d'une catégorie au fil du temps.
         
         Paramètres :
-        - distribution_dict : dictionnaire des distributions par année (non utilisé ici, peut être retiré ou intégré plus tard)
+        - distribution_dict : dictionnaire des distributions par année
         - category : la colonne de regroupement (ex. 'Ethnicity', 'Gender', etc.)
         - selected_categories : liste des catégories sélectionnées à afficher
         - df : DataFrame contenant les colonnes 'Year_Ceremony', category, 'Name', 'Film'
+        - cumulative : booléen indiquant si les données doivent être affichées de manière cumulative
 
         Retourne : 
-        - figure Plotly de type line chart avec des informations détaillées sur le hover.
+        - figure Plotly de type line chart
         """
-
         # Créer la figure
         fig = go.Figure()
-
+        
+        # Générer un dictionnaire de couleurs pour les catégories
+        color_dict = generate_color_dict(selected_categories, colorscale_name='Oranges')
+        
         # Pour chaque catégorie sélectionnée, tracer la courbe
-        for category_name in selected_categories:
+        for i, category_name in enumerate(selected_categories):
+            # Pour les données agrégées par année
+            x_years = sorted(distribution_dict.keys())
+            y_values = [distribution_dict[year].get(category_name, 0) for year in x_years]
+            
             # Filtrer le DataFrame pour la catégorie spécifique
             filtered_df = df[df[category] == category_name]
             
-            # Regrouper par année et effectuer des agrégations
-            grouped_df = filtered_df.groupby('Year_Ceremony').agg(
-                Count=('Name', 'count'),  # Nombre de gagnants par année
-                Names=('Name', 'first'),  # Afficher seulement le premier nom pour chaque année
-                Films=('Film', 'first')   # Afficher seulement le premier film pour chaque année
-            ).reset_index()  # Réinitialiser l'index pour obtenir une DataFrame propre
-
             # Créer les textes personnalisés pour le hover
             hover_texts = []
-            for _, row in grouped_df.iterrows():
-                text = f"Name: {row['Names']}<br>"
-                text += f"Category: {category_name}<br>"
-                text += f"Movie: {row['Films']}<br>"
-                text += f"Year: {int(row['Year_Ceremony'])}"
+            for year in x_years:
+                # Compter le nombre d'occurrences pour cette catégorie et cette année
+                year_count = distribution_dict[year].get(category_name, 0)
+                
+                # Si nous utilisons des données cumulatives, nous ne voulons montrer que les nouvelles entrées
+                annual_count = year_count
+                if cumulative and year > min(x_years):
+                    previous_year_index = x_years.index(year) - 1
+                    previous_year = x_years[previous_year_index]
+                    annual_count = year_count - distribution_dict[previous_year].get(category_name, 0)
+                
+                # Pour cette année et cette catégorie, trouver les noms et films
+                year_data = filtered_df[filtered_df['Year_Ceremony'] == year]
+                
+                # Créer le texte du hover
+                text = f"<b>{category_name}</b><br>"
+                text += f"Année: {year}<br>"
+                
+                if cumulative:
+                    text += f"Total cumulé: {year_count}<br>"
+                    text += f"Nouveaux cette année: {annual_count}<br>"
+                else:
+                    text += f"Nombre cette année: {annual_count}<br>"
+                
+                # Si nous avons des données détaillées pour cette année
+                if not year_data.empty and annual_count > 0:
+                    text += "<br>Exemples:<br>"
+                    # Limiter à 3 exemples maximum
+                    for _, entry in year_data.head(3).iterrows():
+                        text += f"• {entry['Name']} ({entry['Film']})<br>"
+                    
+                    if len(year_data) > 3:
+                        text += f"...et {len(year_data) - 3} autres"
+                
                 hover_texts.append(text)
 
-            # Ajouter la trace à la figure
+            # Ajouter la trace à la figure avec la couleur correspondante
             fig.add_trace(go.Scatter(
-                x=grouped_df['Year_Ceremony'],
-                y=grouped_df['Count'],
-                mode='lines',
+                x=x_years,
+                y=y_values,
+                mode='lines+markers',
                 name=category_name,
+                line=dict(color=color_dict[category_name], width=3),
+                marker=dict(size=8, color=color_dict[category_name]),
                 hoverinfo='text',
                 hovertext=hover_texts
             ))
 
-        # Mettre à jour le layout
-        fig.update_layout(
-            shapes=[
-                # Ajouter une ligne verticale pour l'année 2015
+        # Déterminer si la ligne verticale à 2015 doit être affichée
+        shapes = []
+        if x_years and min(x_years) <= 2015 <= max(x_years):
+            shapes.append(
                 dict(
                     type='line',
                     x0=2015,
@@ -77,22 +106,29 @@ class LineChart():
                         dash='dashdot'
                     )
                 )
-            ],
-            # Titre
-            title=None,
+            )
+
+        # Mettre à jour le layout
+        fig.update_layout(
+            shapes=shapes,  # Utiliser la liste de formes conditionnelle
+            # Configuration générale
             autosize=True,
+            paper_bgcolor=TRANSPARENT,  # Fond transparent
+            plot_bgcolor=TRANSPARENT,   # Fond du graphique transparent
             xaxis=dict(
-                title=None,
+                title={'text': 'Année', 'font': {'family': 'Jost', 'size': 16}},
                 showgrid=False,
                 showspikes=True,
-                spikecolor='black',
+                spikecolor='grey',
                 spikethickness=1,
                 spikedash='solid',
-                spikemode='across'
+                spikemode='across',
+                tickfont={'family': 'Jost'}
             ),
             yaxis=dict(
-                title={'text': 'Count', 'font': {'family': 'Jost', 'size': 16}},
-                showgrid=False,
+                title={'text': 'Nombre cumulé' if cumulative else 'Nombre', 'font': {'family': 'Jost', 'size': 16}},
+                showgrid=True,
+                gridcolor='rgba(0,0,0,0.1)',
                 tickfont={'family': 'Jost'}
             ),
             legend_title={
@@ -100,17 +136,13 @@ class LineChart():
                 'font': {'family': 'Jost', 'size': 16}
             },
             legend={'font': {'family': 'Jost', 'size': 14}},
-            hovermode='closest',  # Change hovermode to 'closest' to show hover info for only one point
+            hovermode='closest',
             hoverdistance=100,
             hoverlabel=dict(
-                bgcolor='white',
+                bgcolor='white', 
                 font_size=16,
                 font_family='Jost'
             ),
-            plot_bgcolor=TRANSPARENT,
-            paper_bgcolor=TRANSPARENT,
-            font={'family': 'Jost'},
-            margin=dict(l=50, r=50, t=30, b=50)
         )
-
+        
         return fig
